@@ -1,0 +1,38 @@
+version: "3"
+
+
+services:
+  elastic_search:
+    image: khanhdn4500/elasticsearch:0.0.1
+    container_name: es01-test
+    restart: always
+    # volumes:
+    #   - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+    networks:
+      - elastic
+    
+  kibana:
+    image: khanhdn4500/kibana:0.0.1
+    container_name: kib01-test
+    restart: always
+    # volumes:
+    #   - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    depends_on:
+      - elastic_search
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es01-test:9200
+    networks:
+      - elastic
+
+
+networks:
+  elastic:
+    name: elastic
+    driver: bridge
